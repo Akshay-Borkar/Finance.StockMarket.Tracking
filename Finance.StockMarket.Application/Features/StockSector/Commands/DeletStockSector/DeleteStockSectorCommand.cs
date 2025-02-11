@@ -9,6 +9,6 @@ namespace Finance.StockMarket.Application.Features.StockSector.Commands.DeletSto
 {
     public class DeleteStockSectorCommand: IRequest<Unit>
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
     }
 }

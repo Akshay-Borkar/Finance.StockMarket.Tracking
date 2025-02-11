@@ -18,7 +18,7 @@ namespace Finance.StockMarket.Persistence.Repositories
             return stock;
         }
 
-        public async Task<List<Stock>> GetStocksBySectorId(int sectorId)
+        public async Task<List<Stock>> GetStocksBySectorId(Guid sectorId)
         {
             var stocks = await _context.Stocks
                 .Include(x => x.StockSector)

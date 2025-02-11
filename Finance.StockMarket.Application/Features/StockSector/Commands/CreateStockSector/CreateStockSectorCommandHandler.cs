@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Finance.StockMarket.Application.Features.StockSector.Commands.CreateStockSector
 {
-    public class CreateStockSectorCommandHandler : IRequestHandler<CreateStockSectorCommand, int>
+    public class CreateStockSectorCommandHandler : IRequestHandler<CreateStockSectorCommand, Guid>
     {
         private readonly IMapper _mapper;
         private readonly IStockSectorRepository _stockSectorRepository;
@@ -25,7 +25,7 @@ namespace Finance.StockMarket.Application.Features.StockSector.Commands.CreateSt
             _stockSectorRepository = stockSectorRepository;
             _logger = logger;
         }
-        public async Task<int> Handle(CreateStockSectorCommand request, CancellationToken cancellationToken)
+        public async Task<Guid> Handle(CreateStockSectorCommand request, CancellationToken cancellationToken)
         {
             // Validate incoming data
             var validator = new CreateStockSectorCommandValidator(_stockSectorRepository);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Finance.StockMarket.Application.Features.StockSector.Commands.CreateStockSector
 {
-    public class CreateStockSectorCommand : IRequest<int>
+    public class CreateStockSectorCommand : IRequest<Guid>
     {
         public string StockSectorName { get; set; } = string.Empty;
 

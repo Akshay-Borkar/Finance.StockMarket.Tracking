@@ -16,17 +16,17 @@ namespace Finance.StockMarket.Persistence.Configurations
             builder.HasData(
                 new StockSector
                 {
-                    Id = 1,
+                    Id = new Guid("9b1c2b4d-0d51-421b-ab51-8a2cd9e5f3f7"),
                     StockSectorName = "IT",
-                    DateCreated = DateTime.Now,
-                    DateModified = DateTime.Now
+                    DateCreated = new DateTime(2024, 2, 10, 12, 0, 0, DateTimeKind.Utc),
+                    DateModified = new DateTime(2024, 2, 10, 12, 0, 0, DateTimeKind.Utc)
                 },
                 new StockSector
                 {
-                    Id = 2,
+                    Id = new Guid("9b1c2b4d-0d51-421b-ab51-8a2cd9e5f3f8"),
                     StockSectorName = "Health",
-                    DateCreated = DateTime.Now,
-                    DateModified = DateTime.Now
+                    DateCreated = new DateTime(2024, 2, 10, 12, 0, 0, DateTimeKind.Utc),
+                    DateModified = new DateTime(2024, 2, 10, 12, 0, 0, DateTimeKind.Utc)
                 }
             );
 

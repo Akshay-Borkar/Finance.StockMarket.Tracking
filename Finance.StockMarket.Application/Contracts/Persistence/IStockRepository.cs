@@ -6,7 +6,7 @@ namespace Finance.StockMarket.Application.Contracts.Persistence
     {
         Task<Stock> GetStockByName(string stockName);
         
-        Task<List<Stock>> GetStocksBySectorId(int sectorId);
+        Task<List<Stock>> GetStocksBySectorId(Guid sectorId);
 
         Task<List<Stock>> GetStocksByUserId(Guid userId);
     }

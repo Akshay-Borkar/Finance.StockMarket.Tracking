@@ -11,7 +11,7 @@ namespace Finance.StockMarket.Persistence.Repositories
         {
         }
 
-        public async Task<Investment> GetInvestmentDetails(int investmentId)
+        public async Task<Investment> GetInvestmentDetails(Guid investmentId)
         {
             var investment = await _context.Investments.Include(x => x.StockDetails).FirstOrDefaultAsync(x => x.Id == investmentId);
             return investment;
@@ -23,7 +23,7 @@ namespace Finance.StockMarket.Persistence.Repositories
             return investments;
         }
 
-        public Task<List<Investment>> GetInvestmentsByStockId(int stockId)
+        public Task<List<Investment>> GetInvestmentsByStockId(Guid stockId)
         {
             var investments = _context.Investments.Include(x => x.StockDetails).Where(x => x.StockDetails.Id == stockId).ToListAsync();
             return investments;

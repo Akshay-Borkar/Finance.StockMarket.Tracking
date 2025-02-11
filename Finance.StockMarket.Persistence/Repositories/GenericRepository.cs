@@ -36,7 +36,7 @@ namespace Finance.StockMarket.Persistence.Repositories
             return await _context.Set<T>().AsNoTracking().ToListAsync();
         }
 
-        public async Task<T> GetByIdAsync(int id)
+        public async Task<T> GetByIdAsync(Guid id)
         {
             return await _context.Set<T>().AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
         }

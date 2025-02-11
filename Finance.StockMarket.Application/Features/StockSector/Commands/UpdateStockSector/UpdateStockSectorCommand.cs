@@ -9,7 +9,7 @@ namespace Finance.StockMarket.Application.Features.StockSector.Commands.UpdateSt
 {
     public class UpdateStockSectorCommand: IRequest<Unit>
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string StockSectorName { get; set; } = string.Empty;
         public double? SectorPE { get; set; }
     }

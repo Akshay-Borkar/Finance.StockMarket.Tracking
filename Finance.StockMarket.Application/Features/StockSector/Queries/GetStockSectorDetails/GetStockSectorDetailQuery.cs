@@ -2,5 +2,5 @@
 
 namespace Finance.StockMarket.Application.Features.StockSector.Queries.GetStockSectorDetails
 {
-    public record GetStockSectorDetailQuery(int Id): IRequest<StockSectorDetailDTO>;
+    public record GetStockSectorDetailQuery(Guid Id): IRequest<StockSectorDetailDTO>;
 }

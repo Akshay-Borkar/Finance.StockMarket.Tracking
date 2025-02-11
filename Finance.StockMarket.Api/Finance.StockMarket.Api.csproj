@@ -12,10 +12,12 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.2.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Finance.StockMarket.Application\Finance.StockMarket.Application.csproj" />
+    <ProjectReference Include="..\Finance.StockMarket.Identity\Finance.StockMarket.Identity.csproj" />
     <ProjectReference Include="..\Finance.StockMarket.Infrastructure\Finance.StockMarket.Infrastructure.csproj" />
     <ProjectReference Include="..\Finance.StockMarket.Persistence\Finance.StockMarket.Persistence.csproj" />
   </ItemGroup>

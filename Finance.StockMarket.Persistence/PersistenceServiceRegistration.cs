@@ -19,7 +19,7 @@ namespace Finance.StockMarket.Persistence
                 options.UseSqlServer(configuration.GetConnectionString("FinanceStockDatabaseConnectionString"));
             });
 
-            services.AddScoped(typeof(IGenericRepository<>), typeof(IGenericRepository<>));
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IStockRepository, StockRepository>(); // <Stock>
             services.AddScoped<IStockSectorRepository, StockSectorRepository>(); // <StockSector>
             services.AddScoped<IInvestmentRepository, InvestmentRepository>(); // <Investment>
