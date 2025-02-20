@@ -13,10 +13,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Finance.StockMarket.Application\Finance.StockMarket.Application.csproj" />
+    <ProjectReference Include="..\Finance.StockMarket.Infrastructure\Finance.StockMarket.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

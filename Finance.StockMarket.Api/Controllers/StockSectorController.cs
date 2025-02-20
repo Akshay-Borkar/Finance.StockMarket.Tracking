@@ -3,10 +3,12 @@ using Finance.StockMarket.Application.Features.StockSector.Commands.DeletStockSe
 using Finance.StockMarket.Application.Features.StockSector.Commands.UpdateStockSector;
 using Finance.StockMarket.Application.Features.StockSector.Queries.GetAllStockSectors;
 using Finance.StockMarket.Application.Features.StockSector.Queries.GetStockSectorDetails;
+using Finance.StockMarket.Application.SignalRHub;
 using Finance.StockMarket.Identity.Models;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,10 +19,12 @@ namespace Finance.StockMarket.Api.Controllers
     public class StockSectorController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IHubContext<StockPriceHub> _hubContext;
 
-        public StockSectorController(IMediator mediator)
+        public StockSectorController(IMediator mediator, IHubContext<StockPriceHub> hubContext)
         {
             this._mediator = mediator;
+            this._hubContext = hubContext;
         }
         // GET: api/<StockSectorController>
         [HttpGet]
@@ -74,5 +78,18 @@ namespace Finance.StockMarket.Api.Controllers
             await _mediator.Send(command);
             return NoContent();
         }
+
+        [HttpPost("update-price")]
+        public async Task<IActionResult> UpdateStockPrice([FromBody] StockPriceUpdateModel model)
+        {
+            await _hubContext.Clients.All.SendAsync("ReceiveStockPrice", model.Symbol, model.Price);
+            return Ok("Stock price updated!");
+        }
+    }
+
+    public class StockPriceUpdateModel
+    {
+        public string Symbol { get; set; }
+        public decimal Price { get; set; }
     }
 }
