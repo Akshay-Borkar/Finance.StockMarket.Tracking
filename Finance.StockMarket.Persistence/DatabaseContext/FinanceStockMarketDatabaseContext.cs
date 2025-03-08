@@ -1,4 +1,5 @@
 ﻿using Finance.StockMarket.Domain.Common;
+using Finance.StockMarket.Domain.PokerGame;
 using Finance.StockMarket.Persistence.Configurations;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +15,12 @@ namespace Finance.StockMarket.Domain.DatabaseContext
         public DbSet<StockSector> StockSectors { get; set; }
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<Investment> Investments { get; set; }
+        public DbSet<Room> Rooms { get; set; }
+        public DbSet<Player> Players { get; set; }
+        public DbSet<Card> Cards { get; set; }
+        public DbSet<Bet> Bets { get; set; }
 
+        public DbSet<Game> Games { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             // This is to Seed all Configurations
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(FinanceStockMarketDatabaseContext).Assembly);

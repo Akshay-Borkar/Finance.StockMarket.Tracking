@@ -20,10 +20,9 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddCors(options =>
     {
         options.AddPolicy("all", builder =>
-                builder.WithOrigins("http://localhost:3000/")
+                builder.WithOrigins("*")
                         .AllowAnyMethod()
-                        .AllowAnyHeader()
-                        .AllowCredentials());
+                        .AllowAnyHeader());
     });
     // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
     builder.Services.AddEndpointsApiExplorer();
@@ -57,7 +56,11 @@ app.UseMiddleware<ExceptionMiddleware>();
 app.UseRouting();
 app.UseCors("all");
 #region SignalR Hub
-app.UseEndpoints(endpoints => endpoints.MapHub<StockPriceHub>("/stockMarketHub"));
+    app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapHub<StockPriceHub>("/stockMarketHub");
+        endpoints.MapHub<GameHub>("/gameHub");
+    });
 #endregion
 
 app.UseHttpsRedirection();

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Finance.StockMarket.Application.Games.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
 namespace Finance.StockMarket.Application
@@ -8,7 +9,7 @@ namespace Finance.StockMarket.Application
         public static IServiceCollection AddApplicationServices(this IServiceCollection services) {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddMediatR(c => c.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
-
+            services.AddScoped<IGameService, GameService>();
             return services;
         }
     }

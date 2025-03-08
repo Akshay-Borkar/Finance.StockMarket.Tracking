@@ -4,6 +4,7 @@ using Finance.StockMarket.Domain.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Finance.StockMarket.Persistence.Migrations
 {
     [DbContext(typeof(FinanceStockMarketDatabaseContext))]
-    partial class FinanceStockMarketDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250307145502_PokerGame")]
+    partial class PokerGame
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
