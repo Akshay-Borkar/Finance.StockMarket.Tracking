@@ -12,5 +12,10 @@
 
         Task<bool> IsTickerSubscribedAsync(string userId, string ticker);
 
+        #region Sentiment Analysis
+        void StoreSentiment(string key, string sentiment);
+        string? GetSentiment(string key);
+        #endregion
+
     }
 }

@@ -67,4 +67,13 @@ public class RedisCacheService : IRedisCacheService
         return await _db.SetContainsAsync(key, ticker);
     }
 
+    public void StoreSentiment(string key, string sentiment)
+    {
+        throw new NotImplementedException();
+    }
+
+    public string? GetSentiment(string key)
+    {
+        throw new NotImplementedException();
+    }
 }

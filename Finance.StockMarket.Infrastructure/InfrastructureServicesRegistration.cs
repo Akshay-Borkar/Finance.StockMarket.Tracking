@@ -15,6 +15,10 @@ using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
 using Finance.StockMarket.Application.Contracts.SignalRHub;
 using Finance.StockMarket.Infrastructure.BackgroundJob;
+using Finance.StockMarket.Application.Contracts.YahooFinance;
+using Finance.StockMarket.Infrastructure.YahooFinance;
+using Finance.StockMarket.Application.Contracts.SentimentAnalysis;
+using Finance.StockMarket.Infrastructure.SentimentAnalysis;
 
 namespace Finance.StockMarket.Infrastructure;
 
@@ -69,7 +73,8 @@ public static class InfrastructureServicesRegistration
         // Register Services following Clean Architecture
         services.AddScoped<ISignalRService, SignalRService.SignalRService>();
         services.AddHostedService<StockPriceBackgroundService>();
-
+        services.AddHttpClient<IYahooFinanceService, YahooFinanceService>();
+        services.AddScoped<ISentimentAnalysisService, SentimentAnalysisService>();
         return services;
     }
 }
