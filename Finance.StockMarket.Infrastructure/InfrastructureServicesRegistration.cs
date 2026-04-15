@@ -45,7 +45,7 @@ public static class InfrastructureServicesRegistration
 
         // Add Hangfire services
         services.AddScoped<IBackgroundJobService, BackgroundJobService>();
-        services.AddScoped<IStockPriceUpdateJob, StockPriceUpdateJob>();
+        services.AddTransient<IStockPriceUpdateJob, StockPriceUpdateJob>();
         services.AddScoped<JobSchedulerService>(); // Add JobSchedulerService as a scoped service>
         #endregion
         
@@ -63,6 +63,7 @@ public static class InfrastructureServicesRegistration
         // Register Services following Clean Architecture
         services.AddScoped<ISignalRService, SignalRService.SignalRService>();
         services.AddHostedService<StockPriceBackgroundService>();
+        services.AddTransient<IStockQuoteService, StockQuoteService>();
         services.AddHttpClient<IYahooFinanceService, YahooFinanceService>();
         services.AddScoped<ISentimentAnalysisService, SentimentAnalysisService>();
         return services;

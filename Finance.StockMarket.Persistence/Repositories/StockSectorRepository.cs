@@ -1,11 +1,11 @@
 ﻿using Finance.StockMarket.Application.Contracts.Logging;
 using Finance.StockMarket.Application.Contracts.Persistence;
 using Finance.StockMarket.Application.Contracts.RedisCache;
+using Finance.StockMarket.Application.Contracts.YahooFinance;
 using Finance.StockMarket.Domain;
 using Finance.StockMarket.Domain.Common;
 using Finance.StockMarket.Domain.DatabaseContext;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace Finance.StockMarket.Persistence.Repositories
 {
@@ -13,17 +13,17 @@ namespace Finance.StockMarket.Persistence.Repositories
     {
         private readonly int _cacheExpiry = TimeSpan.FromMinutes(5).Minutes;
         private readonly IRedisCacheService _redisCacheService;
-        private readonly IHttpClientFactory _factory;
-        private readonly IAppLogger<StockRepository> _logger;
+        private readonly IStockQuoteService _stockQuoteService;
+        private readonly IAppLogger<StockSectorRepository> _logger;
 
         public StockSectorRepository(
             FinanceStockMarketDatabaseContext context,
             IRedisCacheService redisCacheService,
-            IAppLogger<StockRepository> logger,
-            IHttpClientFactory factory) : base(context)
+            IAppLogger<StockSectorRepository> logger,
+            IStockQuoteService stockQuoteService) : base(context)
         {
             _logger = logger;
-            _factory = factory;
+            _stockQuoteService = stockQuoteService;
             this._redisCacheService = redisCacheService;
         }
 
@@ -56,23 +56,15 @@ namespace Finance.StockMarket.Persistence.Repositories
         {
             try
             {
-                using var client = _factory.CreateClient();
-
                 string symbol = "CDSL.NS";
-                string url = $"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}";
-
-                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0");
-                var res = await client.GetAsync(url);
-                var data = JsonConvert.DeserializeObject<StockApiResponse>(res.Content.ReadAsStringAsync().Result);
+                var data = await _stockQuoteService.FetchStockQuoteAsync(symbol);
 
                 if (data?.Chart != null && data.Chart.Result.Count > 0)
                 {
                     var stock = data.Chart.Result[0];
-
                     string cacheKey = $"StockPrice-{symbol}";
 
                     await _redisCacheService.SetCacheAsync(cacheKey, stock, 5);
-
                     _logger.LogInformation($"Updated stock data for {symbol} in Redis.");
                 }
             }
