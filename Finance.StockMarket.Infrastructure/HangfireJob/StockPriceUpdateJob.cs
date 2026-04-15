@@ -4,11 +4,6 @@ using Finance.StockMarket.Application.Contracts.Persistence;
 using Finance.StockMarket.Application.Contracts.RedisCache;
 using Finance.StockMarket.Domain.Common;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Finance.StockMarket.Infrastructure.HangfireJob
 {
@@ -43,13 +38,10 @@ namespace Finance.StockMarket.Infrastructure.HangfireJob
             {
                 using var client = _factory.CreateClient();
 
-                string symbol = "CDSL.NS";
                 string url = $"https://query1.finance.yahoo.com/v8/finance/chart/{ticker}";
 
                 client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0");
                 var res = await client.GetAsync(url);
-                //var response = await _httpClient.GetAsync(url);
-                //var response1 = await _httpClient.GetStringAsync(url);
                 var data = JsonConvert.DeserializeObject<StockApiResponse>(res.Content.ReadAsStringAsync().Result);
 
                 if (data?.Chart != null && data.Chart.Result.Count > 0)

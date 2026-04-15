@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Finance.StockMarket.Application.Features.StockSector.Commands.DeletStockSector
+namespace Finance.StockMarket.Application.Features.StockSector.Commands.DeleteStockSector
 {
     internal class DeleteStockSectorCommandHandler: IRequestHandler<DeleteStockSectorCommand, Unit>
     {

@@ -1,5 +1,4 @@
 ﻿using Finance.StockMarket.Application.Contracts.RedisCache;
-using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
@@ -37,14 +36,7 @@ public class RedisCacheService : IRedisCacheService
 
     public async Task SetCacheAsync<T>(string key, T data, int expirationTime)
     {
-        //var options = new DistributedCacheEntryOptions
-        //{
-        //    SlidingExpiration = TimeSpan.FromMinutes(3), // Extends expiration on each access
-        //    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(expirationTime)
-        //};
-
         var jsonData = JsonConvert.SerializeObject(data, _serializerSettings);
-
         await _db.StringSetAsync(key, jsonData, TimeSpan.FromMinutes(expirationTime));
     }
 

@@ -58,14 +58,11 @@ namespace Finance.StockMarket.Persistence.Repositories
             {
                 using var client = _factory.CreateClient();
 
-                string symbol = "CDSL.NS"; // Change to your stock ticker
-                //string url1 = $"https://query1.finance.yahoo.com/v7/finance/quote?symbols={symbol}";
+                string symbol = "CDSL.NS";
                 string url = $"https://query1.finance.yahoo.com/v8/finance/chart/{symbol}";
 
                 client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0");
                 var res = await client.GetAsync(url);
-                //var response = await _httpClient.GetAsync(url);
-                //var response1 = await _httpClient.GetStringAsync(url);
                 var data = JsonConvert.DeserializeObject<StockApiResponse>(res.Content.ReadAsStringAsync().Result);
 
                 if (data?.Chart != null && data.Chart.Result.Count > 0)

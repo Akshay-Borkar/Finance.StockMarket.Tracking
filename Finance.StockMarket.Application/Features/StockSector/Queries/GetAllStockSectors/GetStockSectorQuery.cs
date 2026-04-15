@@ -7,9 +7,5 @@ using System.Threading.Tasks;
 
 namespace Finance.StockMarket.Application.Features.StockSector.Queries.GetAllStockSectors
 {
-    //public class GetStockSectorQueries: IRequest<List<StockSectorDTO>>
-    //{
-    //}
-
     public record GetStockSectorQuery: IRequest<List<StockSectorDTO>>;
 }

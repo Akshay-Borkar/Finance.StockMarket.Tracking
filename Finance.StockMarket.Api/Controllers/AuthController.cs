@@ -1,6 +1,5 @@
 ﻿using Finance.StockMarket.Application.Contracts.Identity;
 using Finance.StockMarket.Application.Models.Identity;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Finance.StockMarket.Api.Controllers

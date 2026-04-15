@@ -26,19 +26,9 @@ public static class InfrastructureServicesRegistration
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        //services.AddDbContext<FinanceStockMarketDbContext>(options =>
-        //{
-        //    options.UseSqlServer(configuration.GetConnectionString("FinanceStockMarket"));
-        //});
-
         var redisConnectionString = configuration.GetConnectionString("Redis");
         var connectionMultiplexer = ConnectionMultiplexer.Connect(redisConnectionString);
-        services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer); // Add Redis as a singleton service>
-        //services.AddStackExchangeRedisCache(options =>
-        //{
-        //    options.Configuration = configuration.GetConnectionString("Redis");
-        //    options.InstanceName = "StockMarket_"; // Optional prefix for cache keys
-        //});
+        services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
 
         #region Configure Hangfire with Redis as storage
         // 🔹 Configure Hangfire with Redis as storage

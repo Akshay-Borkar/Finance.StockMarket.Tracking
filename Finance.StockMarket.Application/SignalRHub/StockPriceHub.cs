@@ -19,7 +19,6 @@ namespace Finance.StockMarket.Application.SignalRHub
         public async Task SubscribeToStock(string stockTicker)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, stockTicker);
-            //var isStockAlreadySubscribed = await _redisCacheService.IsTickerSubscribedAsync(Context.UserIdentifier, stockTicker);
             if (!string.IsNullOrEmpty(stockTicker) && !await _redisCacheService.IsTickerSubscribedAsync(Context.UserIdentifier, stockTicker))
                 await _redisCacheService.AddTickerAsync(Context.UserIdentifier, stockTicker);   
         }

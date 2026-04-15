@@ -2,11 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Finance.StockMarket.Identity.Configurations
 {
@@ -14,7 +9,6 @@ namespace Finance.StockMarket.Identity.Configurations
     {
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
-            //var hasher = new PasswordHasher<ApplicationUser>();
             builder.HasData(
                  new ApplicationUser
                  {
@@ -28,7 +22,6 @@ namespace Finance.StockMarket.Identity.Configurations
                      NormalizedUserName = "ADMIN",
                      SecurityStamp = new Guid("b83cc847-3f38-4939-bca0-2b08bc3d01cc").ToString(),
                      PasswordHash = "AQAAAAIAAYagAAAAEJrMnMRjOdWS1aqBFjvPgCnqRylg62dyb7HBghWjxN90FE+x+HT6MURzGCs1o/KiNQ==",
-                     //PasswordHash = hasher.HashPassword(null, "P@ssword1"),
                      EmailConfirmed = true
                  },
                  new ApplicationUser
@@ -42,7 +35,6 @@ namespace Finance.StockMarket.Identity.Configurations
                      UserName = "user",
                      NormalizedUserName = "USER",
                      SecurityStamp = new Guid("f54495fb-30bf-4758-821d-e823851f8e18").ToString(),
-                     //PasswordHash = String.Empty,
                      PasswordHash = "AQAAAAIAAYagAAAAEJrMnMRjOdWS1aqBFjvPgCnqRylg62dyb7HBghWjxN90FE+x+HT6MURzGCs1o/KiNQ==",
                      EmailConfirmed = true
                  }

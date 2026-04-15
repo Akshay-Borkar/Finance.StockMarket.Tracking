@@ -1,5 +1,5 @@
 ﻿using Finance.StockMarket.Application.Features.StockSector.Commands.CreateStockSector;
-using Finance.StockMarket.Application.Features.StockSector.Commands.DeletStockSector;
+using Finance.StockMarket.Application.Features.StockSector.Commands.DeleteStockSector;
 using Finance.StockMarket.Application.Features.StockSector.Commands.UpdateStockSector;
 using Finance.StockMarket.Application.Features.StockSector.Queries.GetAllStockSectors;
 using Finance.StockMarket.Application.Features.StockSector.Queries.GetStockSectorDetails;
@@ -30,7 +30,6 @@ namespace Finance.StockMarket.Api.Controllers
         [HttpGet]
         public async Task<List<StockSectorDTO>> Get()
         {
-            var hasher = new PasswordHasher<ApplicationUser>();
             var stockSectors = await _mediator.Send(new GetStockSectorQuery());
             return stockSectors;
         }
@@ -39,7 +38,6 @@ namespace Finance.StockMarket.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<StockSectorDetailDTO>> Get(Guid id)
         {
-            var hasher = new PasswordHasher<ApplicationUser>();
             var stockSector = await _mediator.Send(new GetStockSectorDetailQuery(id));
             return Ok(stockSector);
         }

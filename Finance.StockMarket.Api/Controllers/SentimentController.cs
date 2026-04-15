@@ -1,6 +1,5 @@
 ﻿using Finance.StockMarket.Application.Contracts.SentimentAnalysis;
 using Finance.StockMarket.Application.Contracts.YahooFinance;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Finance.StockMarket.Api.Controllers

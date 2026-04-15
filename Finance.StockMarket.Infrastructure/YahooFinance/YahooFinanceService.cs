@@ -1,11 +1,5 @@
 ﻿using Finance.StockMarket.Application.Contracts.YahooFinance;
-using System;
-using System.Buffers.Text;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
 namespace Finance.StockMarket.Infrastructure.YahooFinance
