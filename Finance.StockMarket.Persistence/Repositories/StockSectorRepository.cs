@@ -29,7 +29,7 @@ namespace Finance.StockMarket.Persistence.Repositories
 
         public async Task<bool> IsUniqueStockSector(string stockSectorName)
         {
-            return await _context.StockSectors.AnyAsync(x => x.StockSectorName != stockSectorName);
+            return !await _context.StockSectors.AnyAsync(x => x.StockSectorName == stockSectorName);
         }
 
         public new async Task<StockSector> GetByIdAsync(Guid id)

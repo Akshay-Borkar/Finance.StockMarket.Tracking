@@ -1,11 +1,13 @@
 ﻿using Finance.StockMarket.Application.Contracts.SentimentAnalysis;
 using Finance.StockMarket.Application.Contracts.YahooFinance;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Finance.StockMarket.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class SentimentController : ControllerBase
     {
         private readonly ISentimentAnalysisService _sentimentService;

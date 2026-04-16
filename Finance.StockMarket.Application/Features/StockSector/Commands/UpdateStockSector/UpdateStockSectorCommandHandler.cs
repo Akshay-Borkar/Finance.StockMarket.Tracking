@@ -23,8 +23,10 @@ namespace Finance.StockMarket.Application.Features.StockSector.Commands.UpdateSt
         public async Task<Unit> Handle(UpdateStockSectorCommand request, CancellationToken cancellationToken)
         {
             var stockSector = await _stockSectorRepository.GetByIdAsync(request.Id);
-            
-            await _stockSectorRepository.UpdateAsync(_mapper.Map<Domain.StockSector>(stockSector));
+
+            _mapper.Map(request, stockSector);
+
+            await _stockSectorRepository.UpdateAsync(stockSector);
             return Unit.Value;
         }
     }

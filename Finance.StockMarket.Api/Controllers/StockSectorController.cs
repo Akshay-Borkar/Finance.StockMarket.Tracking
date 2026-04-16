@@ -6,6 +6,7 @@ using Finance.StockMarket.Application.Features.StockSector.Queries.GetStockSecto
 using Finance.StockMarket.Application.SignalRHub;
 using Finance.StockMarket.Identity.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -16,6 +17,7 @@ namespace Finance.StockMarket.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class StockSectorController : ControllerBase
     {
         private readonly IMediator _mediator;

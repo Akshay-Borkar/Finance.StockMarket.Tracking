@@ -40,8 +40,8 @@ namespace Finance.StockMarket.Infrastructure.BackgroundJob
                     var subscribedStocks = await redisCacheService.GetSubscribedTickers();
                     if (!subscribedStocks.Any())
                     {
-                        // Wait for 1 minute before fetching again
-                        return;
+                        await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+                        continue;
                     }
                     // Assuming Hangfire stores stock prices under "stock:{ticker}"
                     string[] stockTickers = { "CDSL.NS" };
