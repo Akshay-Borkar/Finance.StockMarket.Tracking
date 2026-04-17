@@ -9,7 +9,9 @@ using Finance.StockMarket.Infrastructure.EmailService;
 using Finance.StockMarket.Infrastructure.Logging;
 using Finance.StockMarket.Infrastructure.RedisCache;
 using Hangfire;
+using Hangfire.InMemory;
 using Hangfire.Redis.StackExchange;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
@@ -26,41 +28,58 @@ public static class InfrastructureServicesRegistration
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        var redisConnectionString = configuration.GetConnectionString("Redis");
-        var connectionMultiplexer = ConnectionMultiplexer.Connect(redisConnectionString);
-        services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer);
+        var redisConnectionString = configuration.GetConnectionString("Redis") ?? "localhost:6379";
 
-        #region Configure Hangfire with Redis as storage
-        // 🔹 Configure Hangfire with Redis as storage
-        services.AddHangfire(config =>
+        IConnectionMultiplexer? connectionMultiplexer = null;
+        try
         {
-            config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
-                .UseSimpleAssemblyNameTypeSerializer()
-                .UseRecommendedSerializerSettings()
-                .UseRedisStorage(connectionMultiplexer, new RedisStorageOptions());
-        });
+            var redisConfig = ConfigurationOptions.Parse(redisConnectionString);
+            redisConfig.ConnectTimeout = 2000;
+            redisConfig.AbortOnConnectFail = false;
+            connectionMultiplexer = ConnectionMultiplexer.Connect(redisConfig);
+        }
+        catch { /* Redis unavailable — fall back to in-memory */ }
 
+        bool redisAvailable = connectionMultiplexer is not null && connectionMultiplexer.IsConnected;
+
+        #region Configure Hangfire (Redis or InMemory)
+        if (redisAvailable)
+        {
+            services.AddSingleton<IConnectionMultiplexer>(connectionMultiplexer!);
+            services.AddHangfire(config =>
+                config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                    .UseSimpleAssemblyNameTypeSerializer()
+                    .UseRecommendedSerializerSettings()
+                    .UseRedisStorage(connectionMultiplexer!, new RedisStorageOptions()));
+            services.AddScoped<IRedisCacheService, RedisCacheService>();
+        }
+        else
+        {
+            services.AddMemoryCache();
+            services.AddHangfire(config =>
+                config.SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                    .UseSimpleAssemblyNameTypeSerializer()
+                    .UseRecommendedSerializerSettings()
+                    .UseInMemoryStorage());
+            services.AddScoped<IRedisCacheService, InMemoryCacheService>();
+        }
 
         services.AddHangfireServer();
-
-        // Add Hangfire services
         services.AddScoped<IBackgroundJobService, BackgroundJobService>();
         services.AddTransient<IStockPriceUpdateJob, StockPriceUpdateJob>();
-        services.AddScoped<JobSchedulerService>(); // Add JobSchedulerService as a scoped service>
+        services.AddScoped<JobSchedulerService>();
         #endregion
-        
+
         // Add SignalR
         services.AddSignalR(options => {
             options.EnableDetailedErrors = true;
             options.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
             options.KeepAliveInterval = TimeSpan.FromSeconds(15);
         });
-        
+
         services.Configure<EmailSettings>(configuration.GetRequiredSection("EmailSettings"));
-        services.AddTransient<IEmailSender, EmailSender>(); // Add EmailSender as a transient service
+        services.AddTransient<IEmailSender, EmailSender>();
         services.AddScoped(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
-        services.AddScoped<IRedisCacheService, RedisCacheService>();  //Add RedisCacheService as a scoped service>
-        // Register Services following Clean Architecture
         services.AddScoped<ISignalRService, SignalRService.SignalRService>();
         services.AddHostedService<StockPriceBackgroundService>();
         services.AddTransient<IStockQuoteService, StockQuoteService>();

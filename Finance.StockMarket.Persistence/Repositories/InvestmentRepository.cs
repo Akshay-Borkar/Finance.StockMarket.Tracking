@@ -36,5 +36,14 @@ namespace Finance.StockMarket.Persistence.Repositories
                                 .Where(x => x.StockDetails.UserId == userId).ToListAsync();
             return investments;
         }
+
+        public async Task<List<Investment>> GetPortfolioByUserId(Guid userId)
+        {
+            return await _context.Investments
+                .Include(x => x.StockDetails)
+                    .ThenInclude(s => s.StockSector)
+                .Where(x => x.StockDetails.UserId == userId)
+                .ToListAsync();
+        }
     }
 }

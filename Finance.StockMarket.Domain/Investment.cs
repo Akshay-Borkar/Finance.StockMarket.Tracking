@@ -10,5 +10,7 @@ public class Investment: BaseEntity
 
     public DateTime InvestmentDate { get; set; }
 
+    public Guid StockDetailsId { get; set; }
+
     public Stock StockDetails { get; set; }
 }

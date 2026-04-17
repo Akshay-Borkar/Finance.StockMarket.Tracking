@@ -21,7 +21,7 @@ namespace Finance.StockMarket.Identity.Configurations
                      UserName = "admin",
                      NormalizedUserName = "ADMIN",
                      SecurityStamp = new Guid("b83cc847-3f38-4939-bca0-2b08bc3d01cc").ToString(),
-                     PasswordHash = "AQAAAAIAAYagAAAAEJrMnMRjOdWS1aqBFjvPgCnqRylg62dyb7HBghWjxN90FE+x+HT6MURzGCs1o/KiNQ==",
+                     PasswordHash = "AQAAAAIAAYagAAAAEJrMnMRjOdWS1aqBFjvPgCnqRylg62dyb7HBghWjxN90FE+x+HT6MURzGCs1o/KiNQ==", // Password: P@ssword1
                      EmailConfirmed = true
                  },
                  new ApplicationUser
@@ -35,7 +35,7 @@ namespace Finance.StockMarket.Identity.Configurations
                      UserName = "user",
                      NormalizedUserName = "USER",
                      SecurityStamp = new Guid("f54495fb-30bf-4758-821d-e823851f8e18").ToString(),
-                     PasswordHash = "AQAAAAIAAYagAAAAEJrMnMRjOdWS1aqBFjvPgCnqRylg62dyb7HBghWjxN90FE+x+HT6MURzGCs1o/KiNQ==",
+                     PasswordHash = "AQAAAAIAAYagAAAAEJrMnMRjOdWS1aqBFjvPgCnqRylg62dyb7HBghWjxN90FE+x+HT6MURzGCs1o/KiNQ==", // Password: P@ssword1
                      EmailConfirmed = true
                  }
             );

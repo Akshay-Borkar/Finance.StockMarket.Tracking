@@ -1,72 +1,82 @@
 ﻿using Finance.StockMarket.Application.Contracts.Logging;
 using Finance.StockMarket.Application.Contracts.RedisCache;
 using Finance.StockMarket.Application.Contracts.SignalRHub;
+using Finance.StockMarket.Application.Contracts.YahooFinance;
 using Finance.StockMarket.Domain.Common;
-using Finance.StockMarket.Infrastructure.RedisCache;
-using Finance.StockMarket.Infrastructure.SignalRService;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Finance.StockMarket.Infrastructure.BackgroundJob
 {
-    public class StockPriceBackgroundService: BackgroundService
+    public class StockPriceBackgroundService : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
-        private readonly IConnectionMultiplexer _redis;
-        private readonly IAppLogger<StockPriceBackgroundService> _logger;
 
-        public StockPriceBackgroundService(IServiceProvider serviceProvider, IConnectionMultiplexer redis)
+        public StockPriceBackgroundService(IServiceProvider serviceProvider)
         {
-            this._serviceProvider = serviceProvider;
-            _redis = redis;
+            _serviceProvider = serviceProvider;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var db = _redis.GetDatabase();
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
                     using var scope = _serviceProvider.CreateScope();
                     var redisCacheService = scope.ServiceProvider.GetRequiredService<IRedisCacheService>();
+                    var signalRService = scope.ServiceProvider.GetRequiredService<ISignalRService>();
+                    var stockQuoteService = scope.ServiceProvider.GetRequiredService<IStockQuoteService>();
+
                     var subscribedStocks = await redisCacheService.GetSubscribedTickers();
                     if (!subscribedStocks.Any())
                     {
                         await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
                         continue;
                     }
-                    // Assuming Hangfire stores stock prices under "stock:{ticker}"
-                    string[] stockTickers = { "CDSL.NS" };
-                    var signalRService = scope.ServiceProvider.GetRequiredService<ISignalRService>();
+
+                    // Try to get price from cache first; fall back to live Yahoo Finance fetch
+                    var connectionMultiplexer = scope.ServiceProvider.GetService<IConnectionMultiplexer>();
+
                     foreach (var ticker in subscribedStocks)
                     {
-                        var stockPriceJson = await db.StringGetAsync($"StockPrice-{ticker}");
-                        // Fetch stock price from Redis cache
-                        ChartResult stockPrice = JsonConvert.DeserializeObject<ChartResult>(stockPriceJson);
-
-                        if (stockPrice?.Meta.RegularMarketPrice > 0)
+                        try
                         {
-                            // Send stock price update via SignalR
-                            await signalRService.SendStockPriceUpdate(ticker, stockPrice.Meta.RegularMarketPrice.ToString());
+                            decimal price = 0;
+
+                            if (connectionMultiplexer is not null && connectionMultiplexer.IsConnected)
+                            {
+                                var db = connectionMultiplexer.GetDatabase();
+                                var stockPriceJson = await db.StringGetAsync($"StockPrice-{ticker}");
+                                if (stockPriceJson.HasValue)
+                                {
+                                    var chartResult = JsonConvert.DeserializeObject<ChartResult>(stockPriceJson);
+                                    price = chartResult?.Meta?.RegularMarketPrice ?? 0;
+                                }
+                            }
+
+                            if (price == 0)
+                            {
+                                var quote = await stockQuoteService.FetchStockQuoteAsync(ticker);
+                                price = quote?.Chart?.Result?.FirstOrDefault()?.Meta?.RegularMarketPrice ?? 0;
+                            }
+
+                            if (price > 0)
+                                await signalRService.SendStockPriceUpdate(ticker, price.ToString("F2"));
                         }
+                        catch { /* skip this ticker if fetch fails */ }
                     }
 
-                    // Wait for 1 minute before fetching again
                     await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
                 }
                 catch (Exception ex)
                 {
                     using var scope = _serviceProvider.CreateScope();
-                    var logger = scope.ServiceProvider.GetRequiredService<IAppLogger<StockPriceBackgroundService>>();
-                    logger.LogError($"Error in StockPriceBackgroundService: {ex.Message}");
+                    var logger = scope.ServiceProvider.GetService<IAppLogger<StockPriceBackgroundService>>();
+                    logger?.LogError($"Error in StockPriceBackgroundService: {ex.Message}");
+                    await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
                 }
             }
         }

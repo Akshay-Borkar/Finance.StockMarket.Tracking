@@ -16,5 +16,7 @@ public class Stock: BaseEntity
 
     public Guid UserId { get; set; }
 
+    public Guid StockSectorId { get; set; }
+
     public StockSector StockSector { get; set; }
 }

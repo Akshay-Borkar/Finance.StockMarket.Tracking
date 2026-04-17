@@ -8,5 +8,6 @@ namespace Finance.StockMarket.Application.Contracts.Persistence
         Task<List<Investment>> GetInvestmentsByUserId(Guid userId);
         Task<Investment> GetInvestmentDetails(Guid investmentId);
         Task<List<Investment>> GetInvestmentsByDate(DateTime startDate, DateTime endDate);
+        Task<List<Investment>> GetPortfolioByUserId(Guid userId);
     }
 }

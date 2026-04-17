@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cmd /c \"node --version\")",
+      "Bash(powershell -Command \"node --version; npm --version; npx --version; ng version\")"
+    ],
+    "additionalDirectories": [
+      "v:\\Dev\\Finance.StockMarket.Web\\src\\app\\core\\models",
+      "v:\\Dev\\Finance.StockMarket.Web\\src\\app\\core\\auth",
+      "v:\\Dev\\Finance.StockMarket.Web\\src\\app\\core\\services",
+      "v:\\Dev\\Finance.StockMarket.Web\\src\\app\\store\\auth",
+      "v:\\Dev\\Finance.StockMarket.Web\\src\\app\\store\\stock-sector"
+    ]
+  }
+}
