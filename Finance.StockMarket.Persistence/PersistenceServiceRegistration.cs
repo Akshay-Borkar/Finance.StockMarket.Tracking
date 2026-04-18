@@ -1,4 +1,5 @@
-﻿using Finance.StockMarket.Application.Contracts.Logging;
+﻿using System;
+using Finance.StockMarket.Application.Contracts.Logging;
 using Finance.StockMarket.Application.Contracts.Persistence;
 using Finance.StockMarket.Domain.DatabaseContext;
 using Finance.StockMarket.Infrastructure.Logging;
@@ -13,7 +14,8 @@ namespace Finance.StockMarket.Persistence
     {
         public static IServiceCollection AddPersistenceServices(this IServiceCollection services, IConfiguration configuration) {
             services.AddDbContext<FinanceStockMarketDatabaseContext>(options => {
-                options.UseSqlServer(configuration.GetConnectionString("FinanceStockDatabaseConnectionString"));
+                options.UseSqlServer(configuration.GetConnectionString("FinanceStockDatabaseConnectionString"),
+                    sql => sql.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(10), errorNumbersToAdd: null));
             });
 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));

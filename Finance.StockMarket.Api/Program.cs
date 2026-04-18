@@ -2,10 +2,13 @@ using Finance.StockMarket.Api.Middleware;
 using Finance.StockMarket.Application;
 using Finance.StockMarket.Application.SignalRHub;
 using Finance.StockMarket.Identity;
+using Finance.StockMarket.Identity.DbContext;
 using Finance.StockMarket.Infrastructure;
 using Finance.StockMarket.Infrastructure.HangfireJob;
 using Finance.StockMarket.Persistence;
+using Finance.StockMarket.Domain.DatabaseContext;
 using Hangfire;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +35,12 @@ var builder = WebApplication.CreateBuilder(args);
 #endregion
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    scope.ServiceProvider.GetRequiredService<FinanceStockMarketDatabaseContext>().Database.Migrate();
+    scope.ServiceProvider.GetRequiredService<FinanceStockMarketIdentityDBContext>().Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

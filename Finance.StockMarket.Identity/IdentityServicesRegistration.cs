@@ -24,7 +24,8 @@ namespace Finance.StockMarket.Identity
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
             services.AddDbContext<FinanceStockMarketIdentityDBContext>(options =>
-               options.UseSqlServer(configuration.GetConnectionString("FinanceStockDatabaseConnectionString")));
+               options.UseSqlServer(configuration.GetConnectionString("FinanceStockDatabaseConnectionString"),
+                   sql => sql.EnableRetryOnFailure(maxRetryCount: 5, maxRetryDelay: TimeSpan.FromSeconds(10), errorNumbersToAdd: null)));
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddEntityFrameworkStores<FinanceStockMarketIdentityDBContext>().AddDefaultTokenProviders();
