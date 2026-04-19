@@ -7,26 +7,30 @@ namespace Finance.StockMarket.Application.Features.Portfolio.Queries.GetPortfoli
     public class GetPortfolioSummaryQueryHandler : IRequestHandler<GetPortfolioSummaryQuery, PortfolioSummaryDTO>
     {
         private readonly IInvestmentRepository _investmentRepository;
+        private readonly IStockRepository _stockRepository;
         private readonly IStockQuoteService _stockQuoteService;
 
         public GetPortfolioSummaryQueryHandler(
             IInvestmentRepository investmentRepository,
+            IStockRepository stockRepository,
             IStockQuoteService stockQuoteService)
         {
             _investmentRepository = investmentRepository;
+            _stockRepository = stockRepository;
             _stockQuoteService = stockQuoteService;
         }
 
         public async Task<PortfolioSummaryDTO> Handle(GetPortfolioSummaryQuery request, CancellationToken cancellationToken)
         {
             var investments = await _investmentRepository.GetPortfolioByUserId(request.UserId);
+            var allUserStocks = await _stockRepository.GetStocksByUserId(request.UserId);
 
-            if (investments.Count == 0)
+            if (allUserStocks.Count == 0)
                 return new PortfolioSummaryDTO();
 
-            // Fetch current prices in parallel for each unique ticker
-            var uniqueTickers = investments
-                .Select(i => i.StockDetails.Ticker)
+            // Fetch current prices in parallel for all user stocks
+            var uniqueTickers = allUserStocks
+                .Select(s => s.Ticker)
                 .Distinct()
                 .ToList();
 
@@ -52,25 +56,28 @@ namespace Finance.StockMarket.Application.Features.Portfolio.Queries.GetPortfoli
             var priceResults = await Task.WhenAll(priceTasks);
             var priceMap = priceResults.ToDictionary(r => r.ticker, r => r.price);
 
-            // Group investments by StockId to compute per-holding aggregates
-            var holdingGroups = investments.GroupBy(i => i.StockDetails.Id);
+            // Group investments by StockId for lookup
+            var investmentsByStock = investments.GroupBy(i => i.StockDetails.Id)
+                .ToDictionary(g => g.Key, g => g.ToList());
 
             var holdings = new List<PortfolioHoldingDTO>();
 
-            foreach (var group in holdingGroups)
+            foreach (var stock in allUserStocks)
             {
-                var stock = group.First().StockDetails;
                 var currentPrice = priceMap.GetValueOrDefault(stock.Ticker, 0);
 
                 double totalInvested = 0;
                 double totalQuantity = 0;
 
-                foreach (var inv in group)
+                if (investmentsByStock.TryGetValue(stock.Id, out var stockInvestments))
                 {
-                    double.TryParse(inv.InvestedAmount, out double invested);
-                    double qty = inv.BuyingPrice > 0 ? invested / inv.BuyingPrice : 0;
-                    totalInvested += invested;
-                    totalQuantity += qty;
+                    foreach (var inv in stockInvestments)
+                    {
+                        double.TryParse(inv.InvestedAmount, out double invested);
+                        double qty = inv.BuyingPrice > 0 ? invested / inv.BuyingPrice : 0;
+                        totalInvested += invested;
+                        totalQuantity += qty;
+                    }
                 }
 
                 double avgBuyPrice = totalQuantity > 0 ? totalInvested / totalQuantity : 0;

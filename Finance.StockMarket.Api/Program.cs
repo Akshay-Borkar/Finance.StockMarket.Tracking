@@ -51,27 +51,26 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<ExceptionMiddleware>();
 
-#region Enable Hangfire Dashboard
-    app.UseHangfireDashboard();
-    app.MapHangfireDashboard();
-#endregion
+app.UseCors("all");
+if (!app.Environment.IsDevelopment())
+    app.UseHttpsRedirection();
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
+
+// All endpoint mappings must come after UseAuthorization
+app.UseHangfireDashboard();
+app.MapHangfireDashboard();
+app.MapHub<StockPriceHub>("/stockMarketHub");
+app.MapControllers();
 
 #region JobSchedulerService and call ScheduleJobs()
+    // Must run after UseHangfireDashboard() so JobStorage is initialized
     using (var scope = app.Services.CreateScope())
     {
         var jobScheduler = scope.ServiceProvider.GetRequiredService<JobSchedulerService>();
-        jobScheduler.ScheduleJobs();  // This schedules all recurring jobs
+        jobScheduler.ScheduleJobs();
     }
 #endregion
-app.UseRouting();
-app.UseCors("all");
-#region SignalR Hub
-app.UseEndpoints(endpoints => endpoints.MapHub<StockPriceHub>("/stockMarketHub"));
-#endregion
-
-app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
 
 app.Run();
