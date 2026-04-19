@@ -14,6 +14,7 @@ namespace Finance.StockMarket.Domain.DatabaseContext
         public DbSet<StockSector> StockSectors { get; set; }
         public DbSet<Stock> Stocks { get; set; }
         public DbSet<Investment> Investments { get; set; }
+        public DbSet<StockPriceAlert> StockPriceAlerts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             // This is to Seed all Configurations

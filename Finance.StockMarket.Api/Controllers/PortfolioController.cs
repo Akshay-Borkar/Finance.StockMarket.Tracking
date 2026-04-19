@@ -1,6 +1,9 @@
+using Finance.StockMarket.Application.Contracts.YahooFinance;
 using Finance.StockMarket.Application.Features.Portfolio.Commands.AddInvestment;
 using Finance.StockMarket.Application.Features.Portfolio.Commands.AddStock;
+using Finance.StockMarket.Application.Features.Portfolio.Queries.GetInvestmentsByStockId;
 using Finance.StockMarket.Application.Features.Portfolio.Queries.GetPortfolioSummary;
+using Finance.StockMarket.Domain.Common;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,10 +16,12 @@ namespace Finance.StockMarket.Api.Controllers
     public class PortfolioController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IStockQuoteService _stockQuoteService;
 
-        public PortfolioController(IMediator mediator)
+        public PortfolioController(IMediator mediator, IStockQuoteService stockQuoteService)
         {
             _mediator = mediator;
+            _stockQuoteService = stockQuoteService;
         }
 
         [HttpGet("summary")]
@@ -50,6 +55,27 @@ namespace Finance.StockMarket.Api.Controllers
         {
             var id = await _mediator.Send(command);
             return CreatedAtAction(nameof(GetSummary), new { }, new { id });
+        }
+
+        [HttpGet("chart/{ticker}")]
+        public async Task<ActionResult<List<OhlcvBar>>> GetChart(
+            string ticker,
+            [FromQuery] string interval = "5m",
+            [FromQuery] string range = "1d")
+        {
+            var bars = await _stockQuoteService.FetchOhlcvAsync(ticker, interval, range);
+            return Ok(bars);
+        }
+
+        [HttpGet("investments/{stockId:guid}")]
+        public async Task<ActionResult<List<InvestmentHistoryDTO>>> GetInvestments(Guid stockId)
+        {
+            var userId = GetUserId();
+            if (userId == Guid.Empty)
+                return Unauthorized();
+
+            var result = await _mediator.Send(new GetInvestmentsByStockIdQuery(stockId, userId));
+            return Ok(result);
         }
 
         private Guid GetUserId()

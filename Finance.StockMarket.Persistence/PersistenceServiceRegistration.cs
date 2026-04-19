@@ -4,6 +4,7 @@ using Finance.StockMarket.Application.Contracts.Persistence;
 using Finance.StockMarket.Domain.DatabaseContext;
 using Finance.StockMarket.Infrastructure.Logging;
 using Finance.StockMarket.Persistence.Repositories;
+using Finance.StockMarket.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,7 @@ namespace Finance.StockMarket.Persistence
             services.AddScoped<IStockRepository, StockRepository>(); // <Stock>
             services.AddScoped<IStockSectorRepository, StockSectorRepository>(); // <StockSector>
             services.AddScoped<IInvestmentRepository, InvestmentRepository>(); // <Investment>
+            services.AddScoped<IStockPriceAlertRepository, StockPriceAlertRepository>(); // <StockPriceAlert>
             services.AddScoped(typeof(IAppLogger<>), typeof(LoggerAdapter<>));
 
             return services; 

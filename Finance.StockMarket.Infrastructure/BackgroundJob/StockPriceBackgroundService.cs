@@ -1,7 +1,11 @@
-﻿using Finance.StockMarket.Application.Contracts.Logging;
+using Finance.StockMarket.Application.Contracts.Email;
+using Finance.StockMarket.Application.Contracts.Logging;
+using Finance.StockMarket.Application.Contracts.Persistence;
 using Finance.StockMarket.Application.Contracts.RedisCache;
 using Finance.StockMarket.Application.Contracts.SignalRHub;
 using Finance.StockMarket.Application.Contracts.YahooFinance;
+using Finance.StockMarket.Application.Models.Email;
+using Finance.StockMarket.Domain;
 using Finance.StockMarket.Domain.Common;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,6 +33,8 @@ namespace Finance.StockMarket.Infrastructure.BackgroundJob
                     var redisCacheService = scope.ServiceProvider.GetRequiredService<IRedisCacheService>();
                     var signalRService = scope.ServiceProvider.GetRequiredService<ISignalRService>();
                     var stockQuoteService = scope.ServiceProvider.GetRequiredService<IStockQuoteService>();
+                    var alertRepository = scope.ServiceProvider.GetRequiredService<IStockPriceAlertRepository>();
+                    var emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
 
                     var subscribedStocks = await redisCacheService.GetSubscribedTickers();
                     if (!subscribedStocks.Any())
@@ -37,7 +43,6 @@ namespace Finance.StockMarket.Infrastructure.BackgroundJob
                         continue;
                     }
 
-                    // Try to get price from cache first; fall back to live Yahoo Finance fetch
                     var connectionMultiplexer = scope.ServiceProvider.GetService<IConnectionMultiplexer>();
 
                     foreach (var ticker in subscribedStocks)
@@ -64,7 +69,10 @@ namespace Finance.StockMarket.Infrastructure.BackgroundJob
                             }
 
                             if (price > 0)
+                            {
                                 await signalRService.SendStockPriceUpdate(ticker, price.ToString("F2"));
+                                await CheckAndTriggerAlertsAsync(ticker, price, alertRepository, emailSender);
+                            }
                         }
                         catch { /* skip this ticker if fetch fails */ }
                     }
@@ -78,6 +86,39 @@ namespace Finance.StockMarket.Infrastructure.BackgroundJob
                     logger?.LogError($"Error in StockPriceBackgroundService: {ex.Message}");
                     await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
                 }
+            }
+        }
+
+        private static async Task CheckAndTriggerAlertsAsync(
+            string ticker,
+            decimal currentPrice,
+            IStockPriceAlertRepository alertRepository,
+            IEmailSender emailSender)
+        {
+            var activeAlerts = await alertRepository.GetActiveAlertsByTickerAsync(ticker);
+            foreach (var alert in activeAlerts)
+            {
+                bool triggered = alert.Condition == AlertCondition.Above
+                    ? currentPrice >= alert.TargetPrice
+                    : currentPrice <= alert.TargetPrice;
+
+                if (!triggered) continue;
+
+                alert.IsTriggered = true;
+                await alertRepository.UpdateAsync(alert);
+
+                var direction = alert.Condition == AlertCondition.Above ? "above" : "below";
+                await emailSender.SendEmail(new EmailMessage
+                {
+                    To = alert.UserEmail,
+                    Subject = $"Price Alert Triggered: {alert.Ticker}",
+                    Content = $"""
+                        <h2>Price Alert Triggered</h2>
+                        <p>Your alert for <strong>{alert.Ticker}</strong> has been triggered.</p>
+                        <p>The price is now <strong>{currentPrice:F2}</strong>, which is {direction} your target of <strong>{alert.TargetPrice:F2}</strong>.</p>
+                        <p>Log in to your StockMarket dashboard to review your portfolio.</p>
+                        """,
+                });
             }
         }
     }
