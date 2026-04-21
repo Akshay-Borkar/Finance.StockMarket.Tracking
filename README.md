@@ -1,10 +1,11 @@
 # Finance.StockMarket.Tracking
 
-A modern, enterprise-grade **stock market tracking and sentiment analysis platform** built with **.NET 9** and following **Clean Architecture principles**. This application enables users to track stock sectors, monitor real-time stock prices via WebSocket (SignalR), analyze sentiment from financial news, and manage investment portfolios with automated background jobs for market data updates.
+A modern, enterprise-grade **stock market tracking and sentiment analysis platform** built with **.NET 10** and following **Clean Architecture principles**. This application enables users to track stock sectors, monitor real-time stock prices via WebSocket (SignalR), analyze sentiment from financial news, manage investment portfolios, and configure price alerts — with automated background jobs for market data updates.
 
 **Live Status**: 🟢 Production-Ready  
-**Framework**: .NET 9.0  
+**Framework**: .NET 10.0  
 **Architecture**: Clean Architecture with Layered Design  
+**Frontend**: [Finance.Portfolio.Web](https://github.com/akshayborkarpro/Finance.Portfolio.Web) (Angular 19)  
 **License**: MIT
 
 ---
