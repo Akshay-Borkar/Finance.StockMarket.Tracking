@@ -1,3 +1,4 @@
+using Finance.StockMarket.Application.Common;
 using Finance.StockMarket.Application.Contracts.YahooFinance;
 using Finance.StockMarket.Application.Features.Portfolio.Commands.AddInvestment;
 using Finance.StockMarket.Application.Features.Portfolio.Commands.AddStock;
@@ -68,13 +69,16 @@ namespace Finance.StockMarket.Api.Controllers
         }
 
         [HttpGet("investments/{stockId:guid}")]
-        public async Task<ActionResult<List<InvestmentHistoryDTO>>> GetInvestments(Guid stockId)
+        public async Task<ActionResult<PagedResult<InvestmentHistoryDTO>>> GetInvestments(
+            Guid stockId,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
         {
             var userId = GetUserId();
             if (userId == Guid.Empty)
                 return Unauthorized();
 
-            var result = await _mediator.Send(new GetInvestmentsByStockIdQuery(stockId, userId));
+            var result = await _mediator.Send(new GetInvestmentsByStockIdQuery(stockId, userId, page, pageSize));
             return Ok(result);
         }
 

@@ -19,4 +19,20 @@ public class StockPriceAlertRepository : GenericRepository<StockPriceAlert>, ISt
             .Where(a => a.UserId == userId)
             .OrderByDescending(a => a.DateCreated)
             .ToListAsync();
+
+    public async Task<(List<StockPriceAlert> Items, int TotalCount)> GetAlertsByUserIdPagedAsync(
+        Guid userId, int page, int pageSize)
+    {
+        var query = _context.StockPriceAlerts
+            .Where(a => a.UserId == userId)
+            .OrderByDescending(a => a.DateCreated);
+
+        var totalCount = await query.CountAsync();
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return (items, totalCount);
+    }
 }

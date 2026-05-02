@@ -1,3 +1,4 @@
+using Finance.StockMarket.Application.Common;
 using Finance.StockMarket.Application.Features.Alerts;
 using Finance.StockMarket.Application.Features.Alerts.CreateAlert;
 using Finance.StockMarket.Application.Features.Alerts.DeleteAlert;
@@ -22,13 +23,15 @@ public class AlertsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<AlertDTO>>> GetAlerts()
+    public async Task<ActionResult<PagedResult<AlertDTO>>> GetAlerts(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 10)
     {
         var userId = GetUserId();
         if (userId == Guid.Empty) return Unauthorized();
 
-        var alerts = await _mediator.Send(new GetUserAlertsQuery(userId));
-        return Ok(alerts);
+        var result = await _mediator.Send(new GetUserAlertsQuery(userId, page, pageSize));
+        return Ok(result);
     }
 
     [HttpPost]

@@ -1,10 +1,11 @@
+using Finance.StockMarket.Application.Common;
 using Finance.StockMarket.Application.Contracts.Persistence;
 using MediatR;
 
 namespace Finance.StockMarket.Application.Features.Portfolio.Queries.GetInvestmentsByStockId;
 
 public class GetInvestmentsByStockIdQueryHandler
-    : IRequestHandler<GetInvestmentsByStockIdQuery, List<InvestmentHistoryDTO>>
+    : IRequestHandler<GetInvestmentsByStockIdQuery, PagedResult<InvestmentHistoryDTO>>
 {
     private readonly IInvestmentRepository _investmentRepository;
     private readonly IStockRepository _stockRepository;
@@ -17,19 +18,22 @@ public class GetInvestmentsByStockIdQueryHandler
         _stockRepository = stockRepository;
     }
 
-    public async Task<List<InvestmentHistoryDTO>> Handle(
+    public async Task<PagedResult<InvestmentHistoryDTO>> Handle(
         GetInvestmentsByStockIdQuery request,
         CancellationToken cancellationToken)
     {
-        // Verify the stock belongs to the requesting user
         var stock = await _stockRepository.GetByIdAsync(request.StockId);
         if (stock is null || stock.UserId != request.UserId)
-            return [];
+            return new PagedResult<InvestmentHistoryDTO> { Page = request.Page, PageSize = request.PageSize };
 
         var investments = await _investmentRepository.GetInvestmentsByStockId(request.StockId);
 
-        return investments
-            .OrderByDescending(i => i.InvestmentDate)
+        var ordered = investments.OrderByDescending(i => i.InvestmentDate).ToList();
+        var totalCount = ordered.Count;
+
+        var items = ordered
+            .Skip((request.Page - 1) * request.PageSize)
+            .Take(request.PageSize)
             .Select(i =>
             {
                 double.TryParse(i.InvestedAmount, out double invested);
@@ -44,5 +48,13 @@ public class GetInvestmentsByStockIdQueryHandler
                 };
             })
             .ToList();
+
+        return new PagedResult<InvestmentHistoryDTO>
+        {
+            Items = items,
+            TotalCount = totalCount,
+            Page = request.Page,
+            PageSize = request.PageSize,
+        };
     }
 }
