@@ -17,7 +17,7 @@ namespace Finance.StockMarket.Application.Features.Portfolio.Commands.AddInvestm
 
             RuleFor(p => p.InvestmentDate)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
-                .LessThanOrEqualTo(DateTime.UtcNow).WithMessage("{PropertyName} cannot be in the future.");
+                .LessThanOrEqualTo(_ => DateTime.UtcNow).WithMessage("{PropertyName} cannot be in the future.");
         }
     }
 }
