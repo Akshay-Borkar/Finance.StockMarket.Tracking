@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.SignalR;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace Finance.StockMarket.Api.Controllers
+namespace Finance.Portfolio.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -1,10 +1,10 @@
-﻿using Finance.StockMarket.Api.Models;
+﻿using Finance.Portfolio.API.Models;
 using Finance.StockMarket.Application.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System.Net;
 
-namespace Finance.StockMarket.Api.Middleware
+namespace Finance.Portfolio.API.Middleware
 {
     public class ExceptionMiddleware
     {

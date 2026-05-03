@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Finance.StockMarket.Api.Controllers;
+namespace Finance.Portfolio.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]

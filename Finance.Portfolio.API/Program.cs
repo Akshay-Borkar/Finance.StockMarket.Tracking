@@ -1,4 +1,4 @@
-using Finance.StockMarket.Api.Middleware;
+using Finance.Portfolio.API.Middleware;
 using Finance.StockMarket.Application;
 using Finance.StockMarket.Application.SignalRHub;
 using Finance.StockMarket.Identity;

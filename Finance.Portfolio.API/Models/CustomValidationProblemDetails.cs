@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Finance.StockMarket.Api.Models
+namespace Finance.Portfolio.API.Models
 {
     public class CustomValidationProblemDetails: ProblemDetails
     {

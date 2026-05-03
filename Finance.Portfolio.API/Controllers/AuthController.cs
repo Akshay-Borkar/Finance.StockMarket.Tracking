@@ -2,7 +2,7 @@
 using Finance.StockMarket.Application.Models.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Finance.StockMarket.Api.Controllers
+namespace Finance.Portfolio.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

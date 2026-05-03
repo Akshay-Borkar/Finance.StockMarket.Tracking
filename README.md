@@ -1,4 +1,4 @@
-# Finance.StockMarket.Tracking
+# Finance.Portfolio.API
 
 A modern, enterprise-grade **stock market tracking and sentiment analysis platform** built with **.NET 10** and following **Clean Architecture principles**. This application enables users to track stock sectors, monitor real-time stock prices via WebSocket (SignalR), analyze sentiment from financial news, manage investment portfolios, and configure price alerts — with automated background jobs for market data updates.
 
@@ -29,7 +29,7 @@ A modern, enterprise-grade **stock market tracking and sentiment analysis platfo
 
 ## Overview
 
-**Finance.StockMarket.Tracking** is a comprehensive stock market analysis platform that integrates real-time data from Yahoo Finance, machine learning for sentiment analysis, and WebSocket technology for live price updates. The platform is designed with enterprise-grade patterns including Repository Pattern, CQRS, Dependency Injection, and comprehensive error handling.
+**Finance.Portfolio.API** is a comprehensive stock market analysis platform that integrates real-time data from Yahoo Finance, machine learning for sentiment analysis, and WebSocket technology for live price updates. The platform is designed with enterprise-grade patterns including Repository Pattern, CQRS, Dependency Injection, and comprehensive error handling.
 
 ### Core Capabilities:
 - 📊 **Stock Sector Management** - CRUD operations on stock sectors (IT, Healthcare, Finance, etc.)
@@ -121,7 +121,7 @@ This project follows **Clean Architecture** with clear separation of concerns:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│           Finance.StockMarket.Api (Presentation)        │
+│           Finance.Portfolio.API (Presentation)        │
 │  - Controllers (AuthController, StockSectorController)  │
 │  - Middleware (ExceptionHandling)                       │
 └──────────────┬──────────────────────────────────────────┘
@@ -201,13 +201,13 @@ Before running the application, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/Finance.StockMarket.Tracking.git
+git clone https://github.com/yourusername/Finance.Portfolio.API.git
 cd Finance.StockMarket.Tracking
 ```
 
 ### 2. Configure Environment Settings
 
-Update the connection strings and API keys in `Finance.StockMarket.Api/appsettings.json`:
+Update the connection strings and API keys in `Finance.Portfolio.API/appsettings.json`:
 
 ```json
 {
@@ -242,16 +242,16 @@ dotnet restore
 
 ```bash
 # Migrate the main database (Persistence layer)
-dotnet ef database update --project Finance.StockMarket.Persistence --startup-project Finance.StockMarket.Api
+dotnet ef database update --project Finance.StockMarket.Persistence --startup-project Finance.Portfolio.API
 
 # Migrate the identity database
-dotnet ef database update --project Finance.StockMarket.Identity --startup-project Finance.StockMarket.Api
+dotnet ef database update --project Finance.StockMarket.Identity --startup-project Finance.Portfolio.API
 ```
 
 ### 5. Run the Application
 
 ```bash
-dotnet run --project Finance.StockMarket.Api
+dotnet run --project Finance.Portfolio.API
 ```
 
 The application will start on:
@@ -585,9 +585,9 @@ Default CORS policy allows requests from frontend at `http://localhost:3000/`:
 ## Directory Structure
 
 ```
-Finance.StockMarket.Tracking/
+Finance.Portfolio.API/
 │
-├── Finance.StockMarket.Api/
+├── Finance.Portfolio.API/
 │   ├── Controllers/
 │   │   ├── AuthController.cs              # Authentication endpoints
 │   │   ├── SentimentController.cs         # Sentiment analysis endpoints
@@ -685,7 +685,7 @@ Finance.StockMarket.Tracking/
 │   ├── Finance.StockMarket.Persistence.csproj
 │   └── PersistenceServiceRegistration.cs  # Dependency injection
 │
-├── Finance.StockMarket.Tracking.sln       # Visual Studio solution file
+├── Finance.Portfolio.API.sln       # Visual Studio solution file
 └── README.md                              # This file
 ```
 
@@ -794,8 +794,8 @@ This project is licensed under the MIT License - see [LICENSE](LICENSE) file for
 
 For issues, questions, or suggestions:
 - 📧 Email: support@stockmarket.dev
-- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/Finance.StockMarket.Tracking/issues)
-- 💬 Discussions: [GitHub Discussions](https://github.com/yourusername/Finance.StockMarket.Tracking/discussions)
+- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/Finance.Portfolio.API/issues)
+- 💬 Discussions: [GitHub Discussions](https://github.com/yourusername/Finance.Portfolio.API/discussions)
 
 ---
 

@@ -4,6 +4,8 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Finance.Portfolio.API</RootNamespace>
+    <AssemblyName>Finance.Portfolio.API</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
