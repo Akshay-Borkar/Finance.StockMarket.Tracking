@@ -2,6 +2,7 @@ using Finance.StockMarket.Application.Common;
 using Finance.StockMarket.Application.Contracts.YahooFinance;
 using Finance.StockMarket.Application.Features.Portfolio.Commands.AddInvestment;
 using Finance.StockMarket.Application.Features.Portfolio.Commands.AddStock;
+using Finance.StockMarket.Application.Features.Portfolio.Commands.DeleteStock;
 using Finance.StockMarket.Application.Features.Portfolio.Queries.GetInvestmentsByStockId;
 using Finance.StockMarket.Application.Features.Portfolio.Queries.GetPortfolioSummary;
 using Finance.StockMarket.Domain.Common;
@@ -56,6 +57,19 @@ namespace Finance.Portfolio.API.Controllers
         {
             var id = await _mediator.Send(command);
             return CreatedAtAction(nameof(GetSummary), new { }, new { id });
+        }
+
+        [HttpDelete("stock/{stockId:guid}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult> DeleteStock(Guid stockId)
+        {
+            var userId = GetUserId();
+            if (userId == Guid.Empty)
+                return Unauthorized();
+
+            await _mediator.Send(new DeleteStockCommand(stockId, userId));
+            return NoContent();
         }
 
         [HttpGet("chart/{ticker}")]
