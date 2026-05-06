@@ -1,6 +1,5 @@
 using Finance.StockMarket.Application.Contracts.Persistence;
 using Finance.StockMarket.Application.Contracts.YahooFinance;
-using Finance.StockMarket.Application.Exceptions;
 using Finance.StockMarket.Domain;
 using MediatR;
 
@@ -19,10 +18,6 @@ namespace Finance.StockMarket.Application.Features.Portfolio.Commands.AddStock
 
         public async Task<Guid> Handle(AddStockCommand request, CancellationToken cancellationToken)
         {
-            var validator = new AddStockCommandValidator();
-            var validationResult = await validator.ValidateAsync(request, cancellationToken);
-            if (validationResult.Errors.Count > 0)
-                throw new BadRequestException("Invalid Stock data", validationResult);
 
             string currentPrice = "0";
             string marketCap = string.Empty;
