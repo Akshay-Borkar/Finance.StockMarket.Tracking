@@ -19,8 +19,7 @@ namespace Finance.StockMarket.Application.Features.Portfolio.Commands.AddStock
         public async Task<Guid> Handle(AddStockCommand request, CancellationToken cancellationToken)
         {
 
-            string currentPrice = "0";
-            string marketCap = string.Empty;
+            decimal currentPrice = 0m;
 
             try
             {
@@ -28,7 +27,7 @@ namespace Finance.StockMarket.Application.Features.Portfolio.Commands.AddStock
                 var meta = quote?.Chart?.Result?.FirstOrDefault()?.Meta;
                 if (meta != null)
                 {
-                    currentPrice = meta.RegularMarketPrice.ToString("F2");
+                    currentPrice = meta.RegularMarketPrice;
                 }
             }
             catch { /* proceed with default if Yahoo Finance is unavailable */ }
@@ -39,7 +38,6 @@ namespace Finance.StockMarket.Application.Features.Portfolio.Commands.AddStock
                 Ticker = request.Ticker.ToUpperInvariant(),
                 StockName = request.StockName,
                 CurrentPrice = currentPrice,
-                MarketCap = marketCap,
                 StockPE = request.StockPE,
                 UserId = request.UserId,
                 StockSectorId = request.StockSectorId

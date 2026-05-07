@@ -8,9 +8,9 @@ public class Stock: BaseEntity
 
     public string StockName { get; set; } = string.Empty;
 
-    public string CurrentPrice { get; set; } = string.Empty;
+    public decimal CurrentPrice { get; set; }
 
-    public string MarketCap { get; set; } = string.Empty;
+    public decimal? MarketCap { get; set; }
 
     public double? StockPE { get; set; }
 

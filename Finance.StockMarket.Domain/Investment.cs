@@ -4,7 +4,7 @@ namespace Finance.StockMarket.Domain;
 
 public class Investment: BaseEntity
 {
-    public string InvestedAmount { get; set; } = string.Empty;
+    public decimal InvestedAmount { get; set; }
 
     public double BuyingPrice { get; set; }
 

@@ -45,11 +45,8 @@ namespace Finance.StockMarket.Application.Features.Portfolio.Queries.GetPortfoli
                 catch
                 {
                     // Fall back to the stored CurrentPrice on the Stock entity
-                    var fallbackStr = investments
-                        .FirstOrDefault(i => i.StockDetails.Ticker == ticker)
-                        ?.StockDetails.CurrentPrice ?? "0";
-                    double.TryParse(fallbackStr, out double fallback);
-                    return (ticker, price: fallback);
+                    var fallback = allUserStocks.FirstOrDefault(s => s.Ticker == ticker)?.CurrentPrice ?? 0m;
+                    return (ticker, price: (double)fallback);
                 }
             });
 
@@ -73,7 +70,7 @@ namespace Finance.StockMarket.Application.Features.Portfolio.Queries.GetPortfoli
                 {
                     foreach (var inv in stockInvestments)
                     {
-                        double.TryParse(inv.InvestedAmount, out double invested);
+                        double invested = (double)inv.InvestedAmount;
                         double qty = inv.BuyingPrice > 0 ? invested / inv.BuyingPrice : 0;
                         totalInvested += invested;
                         totalQuantity += qty;

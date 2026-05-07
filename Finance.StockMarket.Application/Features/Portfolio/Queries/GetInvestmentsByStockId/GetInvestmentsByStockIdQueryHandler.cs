@@ -36,7 +36,7 @@ public class GetInvestmentsByStockIdQueryHandler
             .Take(request.PageSize)
             .Select(i =>
             {
-                double.TryParse(i.InvestedAmount, out double invested);
+                double invested = (double)i.InvestedAmount;
                 double qty = i.BuyingPrice > 0 ? invested / i.BuyingPrice : 0;
                 return new InvestmentHistoryDTO
                 {

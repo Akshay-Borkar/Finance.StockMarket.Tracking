@@ -30,7 +30,7 @@ namespace Finance.StockMarket.Application.SignalRHub
 
         public async Task SendStockUpdate(string stockSymbol, decimal price)
         {
-            await Clients.All.SendAsync("ReceiveStockPrice", stockSymbol, price);
+            await Clients.Group(stockSymbol).SendAsync("ReceiveStockPrice", stockSymbol, price);
         }
     }
 }
