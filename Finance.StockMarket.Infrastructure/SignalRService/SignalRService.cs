@@ -18,7 +18,7 @@ namespace Finance.StockMarket.Infrastructure.SignalRService
             _hubContext = hubContext;
         }
 
-        public async Task SendStockPriceUpdate(string ticker, string price)
+        public async Task SendStockPriceUpdate(string ticker, decimal price)
         {
             await _hubContext.Clients.Group(ticker).SendAsync("ReceiveStockPrice", ticker, price);
         }

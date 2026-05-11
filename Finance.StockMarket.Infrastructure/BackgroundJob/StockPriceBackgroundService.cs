@@ -44,6 +44,7 @@ namespace Finance.StockMarket.Infrastructure.BackgroundJob
                     }
 
                     var connectionMultiplexer = scope.ServiceProvider.GetService<IConnectionMultiplexer>();
+                    var logger = scope.ServiceProvider.GetService<IAppLogger<StockPriceBackgroundService>>();
 
                     foreach (var ticker in subscribedStocks)
                     {
@@ -70,11 +71,14 @@ namespace Finance.StockMarket.Infrastructure.BackgroundJob
 
                             if (price > 0)
                             {
-                                await signalRService.SendStockPriceUpdate(ticker, price.ToString("F2"));
+                                await signalRService.SendStockPriceUpdate(ticker, price);
                                 await CheckAndTriggerAlertsAsync(ticker, price, alertRepository, emailSender);
                             }
                         }
-                        catch { /* skip this ticker if fetch fails */ }
+                        catch (Exception ex)
+                        {
+                            logger?.LogError($"Failed to fetch/broadcast price for ticker {ticker}: {ex.Message}");
+                        }
                     }
 
                     await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);

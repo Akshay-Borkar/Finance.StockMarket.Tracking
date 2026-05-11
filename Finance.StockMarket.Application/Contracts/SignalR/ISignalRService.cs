@@ -2,6 +2,6 @@
 {
     public interface ISignalRService
     {
-        Task SendStockPriceUpdate(string ticker, string price);
+        Task SendStockPriceUpdate(string ticker, decimal price);
     }
 }

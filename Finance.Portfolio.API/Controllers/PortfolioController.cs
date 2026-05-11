@@ -55,6 +55,10 @@ namespace Finance.Portfolio.API.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> AddInvestment([FromBody] AddInvestmentCommand command)
         {
+            command.UserId = GetUserId();
+            if (command.UserId == Guid.Empty)
+                return Unauthorized();
+
             var id = await _mediator.Send(command);
             return CreatedAtAction(nameof(GetSummary), new { }, new { id });
         }

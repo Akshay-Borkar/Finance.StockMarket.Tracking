@@ -5,7 +5,8 @@ namespace Finance.StockMarket.Application.Features.Portfolio.Commands.AddInvestm
     public class AddInvestmentCommand : IRequest<Guid>
     {
         public Guid StockId { get; set; }
-        public double InvestedAmount { get; set; }
+        public Guid UserId { get; set; }
+        public decimal InvestedAmount { get; set; }
         public double BuyingPrice { get; set; }
         public DateTime InvestmentDate { get; set; }
     }
